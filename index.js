@@ -1,28 +1,24 @@
 import express from "express";
 import bodyParser from "body-parser";
-import pg from "pg";
+const { Pool } = require("pg");
 
-const db = new pg.Client({
-  host: "localhost",
-  user: "gourishankar",
-  port: 5432,
-  password: "123123",
-  database: "bunty",
+const pool = new Pool({
+  connectionString: `postgres://default:${process.env.PASSWD}@ep-solitary-firefly-a1tbgvck-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require?sslmode=require`,
 });
 
 const app = express();
 const port = 3000;
 
-db.connect();
+pool.connect();
 
 let quiz = [];
-db.query("SELECT * FROM capitals", (err, res) => {
+pool.query("SELECT * FROM capitals", (err, res) => {
   if (err) {
     console.error("Error executing query", err.stack);
   } else {
     quiz = res.rows;
   }
-  db.end();
+  pool.end();
 });
 
 let totalCorrect = 0;
